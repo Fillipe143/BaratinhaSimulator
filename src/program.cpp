@@ -1,22 +1,18 @@
 #include "arduino/baratinha.h"
 #include "arduino/core.h"
+#include <string>
 
 void setup() {
 }
 
-long startTime = 0;
-bool isWalking = false;
-
 void loop() {
-    // Anda por 1 segundo depois para espera um segundo e volta a andar
-    if (millis() - startTime >= 1000) {
-        isWalking = !isWalking;
-        startTime = millis();
-    }
+    int left = readSensor(SENSOR_LEFT);
+    int right = readSensor(SENSOR_RIGHT);
 
-    if (isWalking) {
-        motor(GO_FORWARD, 100, GO_FORWARD, 100);
-    } else {
-        motor(GO_FORWARD, 100, GO_BACK, 100);
-    }
+    Serial::print("Left: " + std::to_string(left));
+    Serial::println(" Right: " + std::to_string(right));
+
+    // Turn to side furthest from the wall
+    int maxDist = left > right ? left : right;
+    motor(GO_FORWARD, 100.0 * maxDist / left, GO_FORWARD, 100.0 * maxDist / right);
 }

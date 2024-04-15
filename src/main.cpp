@@ -3,7 +3,6 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_timer.h>
-#include <algorithm>
 #include <array>
 #include <chrono>
 #include <cmath>
@@ -25,7 +24,7 @@ void renderRobot(Window* window) {
     window->setColor(255, 0, 0);
     window->drawRay(robotX, robotY, robotAngle + 0, sensorsValue[0] + robotRadius);               // 1
     window->drawRay(robotX, robotY, robotAngle + 45 , sensorsValue[6] + robotRadius);             // 7
-    window->drawRay(robotX, robotY, robotAngle + 90, sensorsValue[2] + robotRadius);              // 2
+    window->drawRay(robotX, robotY, robotAngle + 90, sensorsValue[1] + robotRadius);              // 2
     window->drawRay(robotX, robotY, robotAngle + 90 + 45, sensorsValue[3] + robotRadius);         // 4
 
     // Not works in real life
@@ -65,8 +64,28 @@ void updateSensorsValue() {
             if (intersec2d(k, l, line[0], line[1], s, t)) {
                 int x = k.x + (l.x - k.x)*s;
                 int y = k.y + (l.y - k.y)*s;
-                int dist = sqrt(pow((double) x - robotX, 2) + pow((double)y - robotY, 2));
-                if (sensorsValue[i] > dist) sensorsValue[i] = dist;
+
+                int maxLineX = line[0].x > line[1].x ? line[0].x : line[1].x;
+                int maxLineY = line[0].y > line[1].y ? line[0].y : line[1].y;
+                int minLineX = line[0].x < line[1].x ? line[0].x : line[1].x;
+                int minLineY = line[0].y < line[1].y ? line[0].y : line[1].y;
+
+                // Check if x and y is in range of line
+                if (x >= minLineX && x <= maxLineX && y >= minLineY && y <= maxLineY) {
+                    // Check if x and y is in range of robot
+                    int endRayX = robotX + static_cast<int>(100 * std::cos((sensorAngles[i] + robotAngle) * M_PI / 180.0));
+                    int endRayY = robotY + static_cast<int>(100 * std::sin((sensorAngles[i] + robotAngle) * M_PI / 180.0));
+
+                    int maxRobotX = robotX > endRayX ? robotX : endRayX;
+                    int maxRobotY = robotY > endRayY ? robotY : endRayY;
+                    int minRobotX = robotX < endRayX ? robotX : endRayX;
+                    int minRobotY = robotY < endRayY ? robotY : endRayY;
+
+                    if (x >= minRobotX && x <= maxRobotX && y >= minRobotY && y <= maxRobotY) {
+                        int dist = sqrt(pow((double) x - robotX, 2) + pow((double)y - robotY, 2)) - robotRadius;
+                        if (dist <= 100 && sensorsValue[i] > dist) sensorsValue[i] = dist;
+                    }
+                }
             }
         }
     }
