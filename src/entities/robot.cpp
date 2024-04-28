@@ -1,5 +1,6 @@
 #include "robot.h"
 #include <cmath>
+#include <cstdio>
 #include <raylib.h>
 
 #define MAX_SPEED 100
@@ -21,7 +22,7 @@ void Robot::motor(int leftDirection, uint8_t leftSpeed, int rightDirection, uint
     Robot::speed.y = (rightDirection == GO_FORWARD ? 1 : -1) * (rightDirection % 100);
 }
 
-void Robot::onUpdate() {
+void Robot::update() {
     // Update rotation based on speed
     float dirSpeed = (Robot::speed.x - Robot::speed.y) / MAX_SPEED;
     float rotationForce = dirSpeed *  ROTATION_CONST;

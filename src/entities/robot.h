@@ -30,7 +30,8 @@ public:
     void rotate(float angle);
     void motor(int leftDirection, uint8_t leftSpeed, int rightDirection, uint8_t rightSpeed);
 
-    void onUpdate();
+    void update();
+    void render();
 };
 
 #endif
