@@ -31,6 +31,6 @@ void Robot::update() {
 
     // Update position based on speed
     float resultSpeed = (Robot::speed.x + Robot::speed.y) / MAX_SPEED;
-    Robot::position.x = resultSpeed * std::cos(Robot::radiansAngle);
-    Robot::position.y = resultSpeed * std::sin(Robot::radiansAngle);
+    Robot::position.x += resultSpeed * std::cos(Robot::radiansAngle);
+    Robot::position.y += resultSpeed * std::sin(Robot::radiansAngle);
 }
