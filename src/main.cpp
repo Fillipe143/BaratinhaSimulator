@@ -1,3 +1,4 @@
+#include "entities/robot.h"
 #include <cstdio>
 #include <raylib.h>
 
@@ -22,11 +23,16 @@ int main() {
     CloseWindow();
 }
 
+Robot* robot;
 void onStart() {
+    robot = new Robot(Vector2 { 100.0f, 100.0f });
+    robot->motor(GO_FORWARD, 100, GO_FORWARD, 100);
 }
 
 void onUpdate() {
+    robot->update();
     BeginDrawing();
     ClearBackground(BLACK);
+    robot->render();
     EndDrawing();
 }
