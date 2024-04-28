@@ -36,5 +36,5 @@ void Robot::update() {
 }
 
 void Robot::render() {
-    DrawRectangle(Robot::position.x - Robot::radius, Robot::position.y - Robot::radius, Robot::radius, Robot::radius, GRAY);
+    DrawCircle(Robot::position.x ,Robot::position.y, Robot::radius, Robot::color);
 }
