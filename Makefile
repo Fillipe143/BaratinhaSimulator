@@ -1,9 +1,9 @@
 .SILENT:
 
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -lSDL2
+CXXFLAGS = -std=c++20 -Wall -lraylib
 
-SRCS = src/*.cpp src/lib/*.cpp src/arduino/*.cpp
+SRCS = src/*.cpp
 TARGET = bin/baratinha_simulator
 
 build:
