@@ -2,6 +2,10 @@
 #include <cmath>
 #include <raylib.h>
 
+#define MAX_SPEED 100
+#define MAX_ANGLE (2 * M_PIf)
+#define ROTATION_CONST 0.01f
+
 Robot::Robot(Vector2 position, float degreeAngle, float radius, Color color) {
     Robot::position = position;
     Robot::speed = Vector2 { 0.0f, 0.0f };
@@ -18,22 +22,14 @@ void Robot::motor(int leftDirection, uint8_t leftSpeed, int rightDirection, uint
 }
 
 void Robot::onUpdate() {
-   // double dirSpeed = (double)(robotLeftMotorSpeed - robotRightMotorSpeed) / 100;
-   // double cRotation = 0.01;
+    // Update rotation based on speed
+    float dirSpeed = (Robot::speed.x - Robot::speed.y) / MAX_SPEED;
+    float rotationForce = dirSpeed *  ROTATION_CONST;
+    Robot::radiansAngle = fmodf(radiansAngle + rotationForce, MAX_ANGLE);
+    if (Robot::radiansAngle < 0) Robot::radiansAngle += MAX_ANGLE;
 
-   // double rotationForce = dirSpeed * cRotation;
-   // robotAngle += rotationForce * 180.0 / M_PI;
-   // if (robotAngle >= 360) robotAngle -= 360;
-   // if (robotAngle <= -360) robotAngle += 360;
-
-   // double resultSpeed = (robotLeftMotorSpeed + robotRightMotorSpeed) / 200.0;
-   // robotX += resultSpeed * std::cos(robotAngle * M_PI / 180.0);
-   // robotY += resultSpeed * std::sin(robotAngle * M_PI / 180.0);
-   // updateSensorsValue();
-
-    float dirSpeed = (Robot::speed.x - Robot::speed.y) / 100.0f;
-    float rotationForce = dirSpeed * 0.01f;
-    Robot::radiansAngle = fmodf(radiansAngle + rotationForce, 2 * M_PIf);
-    if (Robot::radiansAngle < 0) Robot::radiansAngle += 2 * M_PIf;
-
+    // Update position based on speed
+    float resultSpeed = (Robot::speed.x + Robot::speed.y) / MAX_SPEED;
+    Robot::position.x = resultSpeed * std::cos(Robot::radiansAngle);
+    Robot::position.y = resultSpeed * std::sin(Robot::radiansAngle);
 }
