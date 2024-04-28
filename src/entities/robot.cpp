@@ -20,7 +20,6 @@ Robot::Robot(Vector2 position, float degreeAngle, float radius, Color color) {
 void Robot::motor(int leftDirection, uint8_t leftSpeed, int rightDirection, uint8_t rightSpeed) {
     Robot::speed.x = (leftDirection == GO_FORWARD ? 1 : -1) * (leftSpeed % 101);
     Robot::speed.y = (rightDirection == GO_FORWARD ? 1 : -1) * (rightSpeed % 101);
-    printf("Xspd: %.1f Yspd: %.1f\n", Robot::speed.x, Robot::speed.y);
 }
 
 void Robot::update() {
@@ -34,5 +33,8 @@ void Robot::update() {
     float resultSpeed = (Robot::speed.x + Robot::speed.y) / MAX_SPEED;
     Robot::position.x += resultSpeed * std::cos(Robot::radiansAngle);
     Robot::position.y += resultSpeed * std::sin(Robot::radiansAngle);
+}
 
+void Robot::render() {
+    DrawRectangle(Robot::position.x - Robot::radius, Robot::position.y - Robot::radius, Robot::radius, Robot::radius, GRAY);
 }

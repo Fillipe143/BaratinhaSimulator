@@ -22,7 +22,7 @@ public:
     float radius, radiansAngle;
     Color color;
 
-    Robot(Vector2 position, float degreeAngle = 0.0f, float radius = 0.0f, Color color = DARKGREEN);
+    Robot(Vector2 position, float degreeAngle = 0.0f, float radius = 20.0f, Color color = DARKGREEN);
 
     int readGyron();
     int readSensor(int sensorAddress);
