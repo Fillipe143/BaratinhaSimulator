@@ -12,7 +12,7 @@ Robot::Robot(Vector2 position, float degreeAngle, float radius, Color color) {
     Robot::speed = Vector2 { 0.0f, 0.0f };
 
     Robot::radius = radius;
-    Robot::radiansAngle = degreeAngle;
+    Robot::radiansAngle = degreeAngle * M_PIf / 180.0f;
 
     Robot::color = color;
 }
