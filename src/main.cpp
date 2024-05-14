@@ -1,16 +1,20 @@
 #include "./program/arduino.h"
 #include <chrono>
 #include <cmath>
+#include <cstddef>
 #include <raylib.h>
 #include <thread>
 
 #define DEFAULT_RADIUS 15
 #define TARGET_FPS 60
 
+#define MAX_SENSOR 100
 #define MAX_SPEED 100
 #define MAX_ANGLE (2 * M_PIf)
 #define ROTATION_CONST 0.01f
-#define RADIANS_TO_DEGREE (180.0f/M_PIf)
+
+#define RADIANS_TO_DEGREE(r) (r * 180.0f / M_PIf)
+#define DEGREE_TO_RADIANS(r) (r * M_PIf / 180.0f)
 
 void updateRobot();
 void updateSensors();
@@ -18,20 +22,21 @@ void updateSensors();
 void renderRobot();
 void renderSensors();
 
-const int sensorAngles[8] = { 0, 90, 270, 135, 315, 225, 45, 180 };
+const int sensorAngles[8] = { 90, 180, 0, 225, 45, 315, 135, 270 };
+// const int sensorAngles[8] = { 0, 90, 270, 135, 315, 225, 45, 180 };
 
 struct Robot {
     Vector2 position;
     int sensors[8];
     Vector2 speed;
-    float angle;
+    float angle = M_PI_2f;
     float radius;
     Color color;
 };
 
 Robot robot = {
     .position = { DEFAULT_RADIUS, DEFAULT_RADIUS },
-    .sensors = { 0, 0, 0, 0, 0, 0, 0, 0 },
+    .sensors = { MAX_SENSOR, MAX_SENSOR, MAX_SENSOR, MAX_SENSOR, MAX_SENSOR, MAX_SENSOR, MAX_SENSOR, MAX_SENSOR },
     .speed = { 0, 0 },
     .angle = 0,
     .radius = DEFAULT_RADIUS,
@@ -82,7 +87,7 @@ void renderRobot() {
 
     DrawCircleV(robot.position, robot.radius, robot.color);
     Rectangle rec = { robot.position.x, robot.position.y, robot.radius, robot.radius };
-    DrawRectanglePro(rec, { robot.radius / 2, robot.radius / 2 }, robot.angle * RADIANS_TO_DEGREE, GRAY);
+    DrawRectanglePro(rec, { robot.radius / 2, robot.radius / 2 }, RADIANS_TO_DEGREE(robot.angle), GRAY);
     EndDrawing();
 }
 
@@ -90,6 +95,19 @@ void updateSensors() {
 }
 
 void renderSensors() {
+    for (size_t i = 0; i < sizeof(robot.sensors) / sizeof(int); i++) {
+        if (i == 7) continue;
+
+        int dim = robot.sensors[i];
+        float angle = DEGREE_TO_RADIANS(sensorAngles[i]) - robot.angle;
+
+        Vector2 start = robot.position;
+        Vector2 end = start;
+        end.x += dim * sinf(angle);
+        end.y += dim * cosf(angle);
+
+        DrawLineV(start, end, RED);
+    }
 }
 
 // Built in methods
@@ -109,7 +127,7 @@ unsigned long millis() {
 }
 
 int readAngle() {
-    return robot.angle;
+    return RADIANS_TO_DEGREE(robot.angle);
 }
 
 int readSensor(int sensor) {
